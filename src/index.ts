@@ -32,17 +32,12 @@
 export { AmqpBroker, AmqpOptions, RpcBackend } from "./amqp";
 export { Client } from "./client";
 export * from "./errors";
-export * from "./factories";
 export * from "./message_broker";
 export * from "./messages";
 export { Compressor, Encoder, Serializer } from "./packer";
 export {
     RedisBackend,
     RedisBroker,
-    RedisClusterOptions,
-    RedisSentinelOptions,
-    RedisSocketOptions,
-    RedisTcpOptions,
 } from "./redis";
 export { Result } from "./result";
 export {

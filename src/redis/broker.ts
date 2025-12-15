@@ -29,20 +29,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import { DEFAULT_REDIS_OPTIONS, RedisOptions } from "./options";
-
 import { MessageBroker } from "../message_broker";
 import { TaskMessage } from "../messages";
-import { isNullOrUndefined } from "../utility";
 
 import * as IoRedis from "ioredis";
+import { appendDefaultOptions } from "./options";
 
 /**
  * RedisBroker implements MessageBroker using the Redis in-memory database.
  * Messages are not durable and will not survive a broker restart.
  */
 export class RedisBroker implements MessageBroker {
-    private readonly options: RedisOptions;
+    private readonly options: IoRedis.RedisOptions;
     private readonly connection: IoRedis.Redis;
 
     /**
@@ -52,16 +50,10 @@ export class RedisBroker implements MessageBroker {
      *                connect over TCP to the default server at localhost.
      * @returns A RedisBroker that is connected to the specified Redis server.
      */
-    public constructor(options?: RedisOptions) {
-        this.options = (() => {
-            if (isNullOrUndefined(options)) {
-                return DEFAULT_REDIS_OPTIONS;
-            }
+    public constructor(options: IoRedis.RedisOptions) {
+        this.options = options;
 
-            return options;
-        })();
-
-        this.connection = this.options.createClient({ keyPrefix: "" });
+        this.connection = new IoRedis(appendDefaultOptions({...this.options, keyPrefix: ""}));
     }
 
     /**

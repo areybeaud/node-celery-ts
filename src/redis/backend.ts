@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import { DEFAULT_REDIS_OPTIONS, RedisOptions } from "./options";
+import { appendDefaultOptions } from "./options";
 
 import { PromiseMap, ResourcePool } from "../containers";
 import { ResultMessage, Status } from "../messages";
@@ -48,7 +48,7 @@ export class RedisBackend implements ResultBackend {
         /^celery-task-meta-([A-Fa-f\d]{8}-[A-Fa-f\d]{4}-[A-Fa-f\d]{4}-[A-Fa-f\d]{4}-[A-Fa-f\d]{12})$/;
     private static readonly UUID_INDEX: number = 1;
 
-    private readonly options: RedisOptions;
+    private readonly options: IoRedis.RedisOptions;
     private readonly pool: ResourcePool<IoRedis.Redis>;
     private readonly results: PromiseMap<string, string> =
         new PromiseMap<string, string>(RedisBackend.TIMEOUT);
@@ -59,17 +59,11 @@ export class RedisBackend implements ResultBackend {
      *                will use the default options from Redis.Options
      * @returns A RedisBackend with an empty connection pool.
      */
-    public constructor(options?: RedisOptions) {
-        this.options = (() => {
-            if (isNullOrUndefined(options)) {
-                return DEFAULT_REDIS_OPTIONS;
-            }
-
-            return options;
-        })();
+    public constructor(options: IoRedis.RedisOptions) {
+        this.options = options;
 
         this.pool = new ResourcePool<IoRedis.Redis>(
-            () => this.options.createClient({ keyPrefix: "celery-task-meta-" }),
+            () => new IoRedis(appendDefaultOptions(this.options)),
             async (connection) => {
                 const response = await connection.quit();
                 connection.disconnect();
@@ -202,7 +196,7 @@ export class RedisBackend implements ResultBackend {
      * @returns A lossy representation of Redis connection options.
      */
     public uri(): string {
-        return this.options.createUri();
+        return JSON.stringify(this.options);
     }
 
     /**
