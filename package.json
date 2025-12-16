@@ -12,12 +12,12 @@
     "homepage": "https://github.com/areybeaud/node-celery-ts",
     "bugs": {
         "url": "https://github.com/areybeaud/node-celery-ts/issues",
-        "email": "antony.reybeaud@cegedim-sante.com"
+        "email": "antonyrey@gmail.com"
     },
     "license": "BSD-3-Clause",
     "author": {
         "name": "Antony REY BEAUD",
-        "email": "antony.reybeaud@cegedim-sante.com",
+        "email": "antonyrey@gmail.com",
         "url": "https://github.com/areybeaud"
     },
     "main": "dist/index.js",
