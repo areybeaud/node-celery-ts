@@ -29,7 +29,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import { appendDefaultOptions } from "./options";
 
 import { PromiseMap, ResourcePool } from "../containers";
 import { ResultMessage, Status } from "../messages";
@@ -37,6 +36,7 @@ import { GetOptions, ResultBackend } from "../result_backend";
 import { createTimeoutPromise, isNullOrUndefined } from "../utility";
 
 import * as IoRedis from "ioredis";
+import { DEFAULT_OPTIONS } from "./options";
 
 /**
  * Redis in-memory database result backend.
@@ -63,7 +63,7 @@ export class RedisBackend implements ResultBackend {
         this.options = options;
 
         this.pool = new ResourcePool<IoRedis.Redis>(
-            () => new IoRedis(appendDefaultOptions(this.options)),
+            () => new IoRedis({...DEFAULT_OPTIONS, ...this.options}),
             async (connection) => {
                 const response = await connection.quit();
                 connection.disconnect();

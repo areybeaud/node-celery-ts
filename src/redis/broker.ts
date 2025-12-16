@@ -33,7 +33,7 @@ import { MessageBroker } from "../message_broker";
 import { TaskMessage } from "../messages";
 
 import * as IoRedis from "ioredis";
-import { appendDefaultOptions } from "./options";
+import { DEFAULT_OPTIONS } from "./options";
 
 /**
  * RedisBroker implements MessageBroker using the Redis in-memory database.
@@ -53,7 +53,7 @@ export class RedisBroker implements MessageBroker {
     public constructor(options: IoRedis.RedisOptions) {
         this.options = options;
 
-        this.connection = new IoRedis(appendDefaultOptions({...this.options, keyPrefix: ""}));
+        this.connection = new IoRedis({ ...DEFAULT_OPTIONS, ...this.options, keyPrefix: ""});
     }
 
     /**

@@ -29,21 +29,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import * as IoRedis from "ioredis";
-
-
 /**
  * @param options The options to copy from.
  * @returns A new options object with old options copied from `options` and
  *          certain options forced to a value.
  */
-export const appendDefaultOptions = (options: IoRedis.RedisOptions): IoRedis.RedisOptions => {
-    const appended = {
-        ...options,
-        dropBufferSupport: true,
-        keyPrefix: "celery-task-meta-",
-        stringNumbers: true,
-    };
-
-    return appended;
-};
+export const DEFAULT_OPTIONS = {
+  dropBufferSupport: true,
+  keyPrefix: "celery-task-meta-",
+  stringNumbers: true,
+} as const;
