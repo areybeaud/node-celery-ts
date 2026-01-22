@@ -122,7 +122,7 @@ export class RedisBackend implements ResultBackend {
     }: GetOptions): Promise<ResultMessage<T>> {
         const listen = async (): Promise<ResultMessage<T>> => {
             const raw = await this.results.get(taskId);
-
+            console.debug("[node-celery-ts] get() -> listen() -> raw", raw);
             return JSON.parse(raw);
         };
 
@@ -138,6 +138,7 @@ export class RedisBackend implements ResultBackend {
                     return listen();
                 }
 
+                console.debug("[node-celery-ts] get() -> pool.use() -> raw", raw);
                 const parsed: ResultMessage<T> = JSON.parse(raw);
 
                 if (parsed.status !== Status.Success) {
@@ -207,14 +208,17 @@ export class RedisBackend implements ResultBackend {
      *               a prefixed UUID.
      */
     private onMessage(channel: string, message: string): void {
+        console.debug("[node-celery-ts] onMessage", channel, message);
         const maybeId = channel.match(RedisBackend.UUID_REGEX);
 
         if (isNullOrUndefined(maybeId)) {
             throw new Error(`channel ${channel} is not a celery result`);
         }
 
+        console.debug("[node-celery-ts] maybeId", maybeId);
         const id = maybeId[RedisBackend.UUID_INDEX];
 
+        console.debug("[node-celery-ts] id", id);
         this.results.resolve(id, message);
     }
 }
